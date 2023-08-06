@@ -8,12 +8,28 @@
 import SwiftUI
 
 struct ContentView: View {
+    @State private var periodsLabel = "Not loaded"
+    
+    func loadPeriod() async -> Void {
+        do {
+            let periods = try await fetchPeriods()
+            let onlyNames = periods
+                .map { $0.name }
+                .joined(separator: ", ")
+            periodsLabel = onlyNames
+        } catch {
+            print(error)
+        }
+    }
+    
     var body: some View {
         VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundColor(.accentColor)
-            Text("Hello, world!")
+            Button("Button") {
+                Task {
+                    await loadPeriod()
+                }
+            }
+            Text(periodsLabel)
         }
         .padding()
     }
